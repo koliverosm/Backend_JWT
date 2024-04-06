@@ -22,7 +22,7 @@ def index():
     date = datetime.now()
     date = date - timedelta(days=30 + 2)
     print(date)
-    return jsonify({'Development:': name, 'Teams: ': teams, 'Fecha De Inicio': date}), 200
+    return jsonify({'Development:': name, 'Teams:': teams, 'Fecha De Inicio': date}), 200
 
 ############### END##################################
 # SALIDA PRINCIPAL AL ERROR DE RUTAS NO ECNONTRADAS#
