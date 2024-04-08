@@ -2,16 +2,16 @@
 from flask import jsonify
 from config import config
 from decouple import config as datos
-from src import init_app
+from src import _init_app
 from datetime import datetime, timedelta
-
+from flask_cors import CORS
 ################# END###################################
 ## INICIALIZADOR DEL BACKEND LLAMANDO LA CLASE INIT_APP##
 configuracion = (config['development'])
-app = init_app(configuracion)
+app = _init_app(configuracion)
 
 # cors = CORS(app, resources={r"/*": {"origins": "http://localhost:4200"}})
-# CORS(app)
+CORS(app)
 ################# END###################################
 
 
@@ -22,10 +22,10 @@ def index():
     date = datetime.now()
     date = date - timedelta(days=30 + 2)
     print(date)
-    return jsonify({'Development:': name, 'Teams:': teams, 'Fecha De Inicio': date}), 200
+    return jsonify({'Development:': name, 'Teams: ': teams, 'Fecha De Inicio': date}), 200
 
-############### END##################################
-# SALIDA PRINCIPAL AL ERROR DE RUTAS NO ECNONTRADAS#
+############### END####################################
+# SALIDA PRINCIPAL AL ERROR DE RUTAS NO ENCNONTRADAS#
 
 
 def pagina_no_encontrada(error):

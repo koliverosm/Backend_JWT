@@ -1,3 +1,4 @@
+# Importacion De Librerias
 from flask import Flask
 from flask_cors import CORS
 from flask_uploads import UploadSet, configure_uploads, IMAGES
@@ -15,7 +16,7 @@ from src.routes import route_autorizacion
 app = Flask(__name__,  template_folder='templates')
 
 
-def init_app(config):
+def _init_app(config):
     # Configuration
     app.config.from_object(config)
     app.config['SECRET_KEY'] = datos('SECRET_KEY')
@@ -24,10 +25,10 @@ def init_app(config):
 
     photos = UploadSet('photos', IMAGES)
     configure_uploads(app, photos)
-    CORS(app, resources={r"/*": {"origins": "http://localhost:4200"}}) ##CORS DEFAULT
-    #CORS(app)
+    #CORS(app, resources={r"/*": {"origins": "http://localhost:4200"}}) ##CORS DEFAULT
+    CORS(app)
     # Blueprints
-    app.register_blueprint(route_uploads.Carga_blueprint,
+    app.register_blueprint(route_uploads.uploadsFile,
                            url_prefix='/uploads')
     app.register_blueprint(
         route_usuario.Usuarios_blueprint, url_prefix='/usuarios')

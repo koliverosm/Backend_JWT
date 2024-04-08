@@ -14,8 +14,8 @@ class uploads():
         try:
             connection = bd.conectar_con_bd()
             cursor = connection.cursor()
-            cursor.execute("Call almacenar_foto_encriptada (%s, %s,%s)",
-                           (filename, file, datos('SECRET_KEY_PHOTO'),))
+            cursor.execute("Call almacenar_foto (%s, %s)",
+                           (filename, file,))
             cursor.close()
             connection.commit()
             return jsonify({"Carga De Imagen Completada": filename}), 201
@@ -30,8 +30,8 @@ class uploads():
         try:
             connection = bd.conectar_con_bd()
             cursor = connection.cursor()
-            cursor.execute("Call obtener_foto_desencriptada (%s,%s)",
-                           id, datos('SECRET_KEY_PHOTO'))
+            cursor.execute("Call obtener_foto (%s)",
+                           id)
             cursor.close()
             rv = cursor.fetchall()
             return rv, 200

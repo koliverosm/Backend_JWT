@@ -1,7 +1,6 @@
 from flask import jsonify, request, Blueprint
 from flask_cors import cross_origin
-from flask_uploads import UploadNotAllowed
-from flask_uploads import UploadSet, IMAGES
+from flask_uploads import UploadNotAllowed,UploadSet, IMAGES
 from werkzeug.utils import secure_filename
 from random import sample
 import os
@@ -11,7 +10,7 @@ import base64
 from decouple import config as datos
 
 carga = uploadscontroller.UploadController()
-Carga_blueprint = Blueprint('carga', __name__)
+uploadsFile = Blueprint('uploadsFile', __name__)
 photos = UploadSet('photos', IMAGES)
 
 
@@ -22,10 +21,8 @@ def name_face_generator():
     longitud = 10
     secuencia = string_aleatorio.upper()
     resultado_aleatorio = sample(secuencia, longitud)
-
     string_aleatorio = "".join(resultado_aleatorio)
     return string_aleatorio
-
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -43,18 +40,18 @@ def __encrypt(photo_encryted: bytes):
 ###############################################
 
 
-@Carga_blueprint.route('/')
+@uploadsFile.route('/')
 @cross_origin()
 def index():
 
     return jsonify({'message': 'Welcome Estas En Ruta Uploads, Apartir De Aqui Todo LLeva /uploads/ + La Ruta Que Deseas Acceder'})
 
-
-@Carga_blueprint.route('/file', methods=['POST'])
+@uploadsFile.route('/file', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
         try:
             file = request.files['image']
+            print(file)
             # Verificar que el archivo sea una imagen
             if file and allowed_file(file.filename):
                 # La ruta donde se encuentra el archivo actual
@@ -73,12 +70,13 @@ def upload_file():
                     foto = f.read()
                  #
 
-              #  respuesta = carga.c_upload(filename, foto)
-               # print('Esta Es la Repuesta Despues De Subir', respuesta)
+                respuesta = carga.c_upload(filename, foto)
+                print('Esta Es la Repuesta Despues De Subir', respuesta)
 
                 # print(respuesta)
-                return 'Archivo subido con éxito: {}'.format(filename)
+                return jsonify('Archivo subido con éxito: {}'.format(filename))
             else:
+                print("Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.")
                 return 'Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.'
         except UploadNotAllowed:
             return 'Tipo de archivo no permitido'
