@@ -4,6 +4,8 @@ from flask_uploads import UploadNotAllowed,UploadSet, IMAGES
 from werkzeug.utils import secure_filename
 from random import sample
 import os
+
+from src import uploads
 from ..controllers import uploadscontroller
 from cryptography.fernet import Fernet
 import base64
@@ -46,6 +48,12 @@ def index():
 
     return jsonify({'message': 'Welcome Estas En Ruta Uploads, Apartir De Aqui Todo LLeva /uploads/ + La Ruta Que Deseas Acceder'})
 
+@uploadsFile.route('/getfoto', methods=['GET'])
+def getfoto():
+    #datos =  request.get_json()
+    
+    return carga.c_getfoto()
+
 @uploadsFile.route('/file', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
@@ -68,8 +76,8 @@ def upload_file():
                 ##### Encriptar La Foto En Formarlo BLOB Para la base de datos #####
                 with open(upload_path, 'rb') as f:
                     foto = f.read()
-                 #
-
+                 #  foto
+                    
                 respuesta = carga.c_upload(filename, foto)
                 print('Esta Es la Repuesta Despues De Subir', respuesta)
 
