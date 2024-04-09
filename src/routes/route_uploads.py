@@ -1,11 +1,12 @@
 from flask import jsonify, request, Blueprint
 from flask_cors import cross_origin
-from flask_uploads import UploadNotAllowed,UploadSet, IMAGES
+from flask_uploads import UploadNotAllowed, UploadSet, IMAGES
 from werkzeug.utils import secure_filename
 from random import sample
 import os
 
 from src import uploads
+from src.dto.dtoImage import ImagenDTO
 from ..controllers import uploadscontroller
 from cryptography.fernet import Fernet
 import base64
@@ -25,6 +26,7 @@ def name_face_generator():
     resultado_aleatorio = sample(secuencia, longitud)
     string_aleatorio = "".join(resultado_aleatorio)
     return string_aleatorio
+
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -48,18 +50,36 @@ def index():
 
     return jsonify({'message': 'Welcome Estas En Ruta Uploads, Apartir De Aqui Todo LLeva /uploads/ + La Ruta Que Deseas Acceder'})
 
+
 @uploadsFile.route('/getfoto', methods=['GET'])
 def getfoto():
-    #datos =  request.get_json()
-    
-    return carga.c_getfoto()
+    data = request.get_json()
+    foto_info, status_code = carga.c_getfoto(data)
+
+    if foto_info and status_code == 200:
+        basepath = os.path.dirname(__file__)
+        # Usar el nombre de archivo obtenido
+        nombre_archivo = foto_info.namefile
+        foto_bytes = foto_info.datafile  # Datos de la imagen
+
+        # Crear el path completo incluyendo el nombre del archivo para guardar la imagen
+        upload_path = os.path.join(
+            basepath, '../uploads/photo_query', nombre_archivo)
+
+        # Escribir los bytes de la imagen en el archivo
+        with open(upload_path, 'wb') as archivo:
+            archivo.write(foto_bytes)
+
+        return jsonify({'Estado': f'Foto almacenada en {upload_path}'})
+    else:
+        return jsonify({'Error': 'No se pudo obtener la foto'}), 404
+
 
 @uploadsFile.route('/file', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
         try:
             file = request.files['image']
-            print(file)
             # Verificar que el archivo sea una imagen
             if file and allowed_file(file.filename):
                 # La ruta donde se encuentra el archivo actual
@@ -76,15 +96,14 @@ def upload_file():
                 ##### Encriptar La Foto En Formarlo BLOB Para la base de datos #####
                 with open(upload_path, 'rb') as f:
                     foto = f.read()
-                 #  foto
-                    
-                respuesta = carga.c_upload(filename, foto)
-                print('Esta Es la Repuesta Despues De Subir', respuesta)
-
-                # print(respuesta)
-                return jsonify('Archivo subido con éxito: {}'.format(filename))
+                
+                respuesta , code = carga.c_upload(ImagenDTO (filename ,foto))
+                print('Esta Es la Repuesta Despues De Subir', respuesta ,"Codigo", code)
+                if code == 201:
+                    return respuesta , 201
             else:
-                print("Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.")
+                print(
+                    "Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.")
                 return 'Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.'
         except UploadNotAllowed:
             return 'Tipo de archivo no permitido'
