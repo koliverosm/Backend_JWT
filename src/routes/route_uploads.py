@@ -1,3 +1,4 @@
+import asyncio
 from flask import jsonify, request, Blueprint
 from flask_cors import cross_origin
 from flask_uploads import UploadNotAllowed, UploadSet, IMAGES
@@ -76,7 +77,8 @@ def getfoto():
 
 
 @uploadsFile.route('/file', methods=['POST'])
-def upload_file():
+async def upload_file():
+
     if request.method == 'POST':
         try:
             file = request.files['image']
@@ -89,18 +91,25 @@ def upload_file():
 
                 # Guardar el archivo en el sistema de archivos
                 extension = os.path.splitext(filename)[1]
-                nuevoNombreFile = name_face_generator() + extension
+                nuevoNombreFile = filename + extension  # name_face_generator() + extension
                 upload_path = os.path.join(
                     basepath, '../uploads/Face_reco', nuevoNombreFile)
+
                 file.save(upload_path)
                 ##### Encriptar La Foto En Formarlo BLOB Para la base de datos #####
                 with open(upload_path, 'rb') as f:
                     foto = f.read()
-                
-                respuesta , code = carga.c_upload(ImagenDTO (filename ,foto))
-                print('Esta Es la Repuesta Despues De Subir', respuesta ,"Codigo", code)
+
+                respuesta, code = await carga.c_upload(ImagenDTO(filename, foto))
+                print('Esta Es la Repuesta Despues De Subir ROUTES',
+                      respuesta, "Codigo", code)
                 if code == 201:
-                    return respuesta , 201
+                    # si se sube correctamente en la base de datos se guarda en el directorio
+                    # file.save(upload_path)
+                    return respuesta, 201
+                elif code == 400:
+
+                    return respuesta, 400
             else:
                 print(
                     "Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.")

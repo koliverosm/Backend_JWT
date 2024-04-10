@@ -17,12 +17,13 @@ CORS(app)
 
 @app.route('/')
 def index():
-    name = 'Backend Desarrollado En Python'
+    nameproyect ='Backend Desarrollado En Python'
+    name = 'Nami Asistente(Chatbot Prov.101)'
     teams = 'Kevin Oliveros - Isaac Perez - Roberto Linero '
     date = datetime.now()
     date = date - timedelta(days=30 + 2)
     print(date)
-    return jsonify({'Development:': name, 'Teams: ': teams, 'Fecha De Inicio': date}), 200
+    return jsonify({'Development:': name,'Proyecto: ': nameproyect, 'Teams: ': teams, 'Fecha De Inicio': date}), 200
 
 ############### END####################################
 # SALIDA PRINCIPAL AL ERROR DE RUTAS NO ENCNONTRADAS#
