@@ -99,8 +99,9 @@ async def upload_file():
                 ##### Encriptar La Foto En Formarlo BLOB Para la base de datos #####
                 with open(upload_path, 'rb') as f:
                     foto = f.read()
-
-                respuesta, code = await carga.c_upload(ImagenDTO(filename, foto))
+                respuesta = ""
+                code = 201
+               # respuesta, code = await carga.c_upload(ImagenDTO(filename, foto))
                 print('Esta Es la Repuesta Despues De Subir ROUTES',
                       respuesta, "Codigo", code)
                 if code == 201:
