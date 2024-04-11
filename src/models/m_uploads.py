@@ -17,11 +17,11 @@ class uploads():
     async def loadfile(self, IMAGEN: ImagenDTO):
         try:
             connection = bd.conectar_con_bd()
-            cursor = connection.cursor()
+            cursor = connection.cursor()  # type: ignore
             # cursor.execute("SET GLOBAL max_allowed_packet=67108864;")
             # Ejecutar el procedimiento almacenado
-            cursor.execute("Call almacenar_foto (%s, %s)",
-                           (IMAGEN.namefile, IMAGEN.datafile,))
+            cursor.execute("Call almacenar_foto (%s, %s , %s)",
+                           (IMAGEN.namefile, IMAGEN.datafile, IMAGEN.id_face))
 
             # Capturar la salida del procedimiento almacenado
            # result = cursor.fetchone()
@@ -29,10 +29,10 @@ class uploads():
            # success_message = result[1] if result else None
            # print('Seccess Message',success_message)
             cursor.close()
-            connection.commit()
+            connection.commit()  # type: ignore
             bd.kill_conexion(connection)
 
-            return jsonify({"Carga De Imagen Completada": IMAGEN.namefile}), 201
+            return jsonify({"generated": IMAGEN.id_face}), 201
         except Error as error:
             if error.errno == 1644:
                 bd.kill_conexion(connection)
@@ -46,7 +46,7 @@ class uploads():
         try:
             id = json.get('id')
             connection = bd.conectar_con_bd()
-            cursor = connection.cursor()
+            cursor = connection.cursor()  # type: ignore
             cursor.execute("Call obtener_foto(%s)", (id,))
             rv = cursor.fetchall()
             cursor.close()
@@ -54,13 +54,13 @@ class uploads():
 
             # Verificar si se obtuvieron resultados
             if rv is not None:
-
+            
                 for result in rv:
                     # Suponiendo que 'namefile' es el primer elemento y 'datafile' el segundo en el resultado
-                    namefile = result[0]
-                    datafile = result[1]
-
-                    return ImagenDTO(namefile, datafile), 200
+                    namefile = result[0]  # type: ignore
+                    datafile = result[1]  # type: ignore
+                    id_face = result[2]  # type: ignore
+                    return ImagenDTO(namefile, datafile , id_face ), 200
                 else:
                     # No se encontraron registros para el id dado
                     return {"error": "No se encontró el registro."}, 404
