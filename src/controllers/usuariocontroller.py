@@ -1,15 +1,13 @@
-from src import models
 from ..models.m_usuario import Usuario
 # mod_login = User_login()
 mod_usuario = Usuario()
 
 
 class Usuariocontroller():
-
-
-    def c_validate(self , json):
+    def c_validate(self, json):
         data = mod_usuario.validate(json)
         return data
+
     def c_crear_usuario(self, json):
         data = mod_usuario.crear_usuario(json)
         return data
