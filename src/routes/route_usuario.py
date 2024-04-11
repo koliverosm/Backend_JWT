@@ -12,8 +12,16 @@ Usuarios_blueprint = Blueprint('usuarios', __name__)
 @Usuarios_blueprint.route('/')
 @cross_origin()
 def index():
-
+        
     return jsonify({'message': 'Welcome Estas En Ruta Usuario, Apartir De Aqui Todo LLeva /usuarios/+La Ruta Que Deseas Acceder'})
+
+
+@Usuarios_blueprint.route('/validate', methods=['POST'])
+@cross_origin()
+def login():
+    data = request.get_json()
+
+    return con_usuario.c_validate(data)
 
 
 @Usuarios_blueprint.route('/listausuarios', methods=['GET'])
@@ -41,6 +49,7 @@ def crear_usuario_admin():
 @cross_origin()
 def consultar_usuario_id():
     return con_usuario.c_consultar_usuario_id()
+
 
 '''
 @Usuarios_blueprint.route('/actualizar_usuario', methods=['POST'])
