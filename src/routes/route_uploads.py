@@ -104,8 +104,7 @@ async def upload_file():
                     has_id_face.NAMESPACE_DNS, f'{filename}')
                 
                 respuesta, code = await carga.c_upload(ImagenDTO(filename, foto, f'{id_face}'))
-                print('Esta Es la Repuesta Despues De Subir ROUTES',
-                      respuesta, "Codigo", code)
+                #print('Esta Es la Repuesta Despues De Subir ROUTES',respuesta, "Codigo", code)
                 if code == 201:
                     # si se sube correctamente en la base de datos se guarda en el directorio
                     # file.save(upload_path)
@@ -114,8 +113,7 @@ async def upload_file():
 
                     return respuesta, 400
             else:
-                print(
-                    "Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.")
+                #print("Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.")
                 return 'Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.'
         except UploadNotAllowed:
             return 'Tipo de archivo no permitido'

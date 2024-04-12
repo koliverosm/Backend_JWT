@@ -5,10 +5,19 @@ from ..bd import bdxamm as base
 bd = base.MyDbEnty()
 # bd = base.MyDbEnty()
 
+class Id_Face():
+
+    def __init__(self, id_face_identy) -> None:
+        self.__id_face_identy = id_face_identy
+  
+    def get_id_faces_identy(self):
+        return self.__id_face_identy
+    def set_id_faces_identy(self, id_faces_identy):
+          self.__id_face_identy = id_faces_identy
 
 class User_login():
-
-    @classmethod
+     
+    
     def __init__(self, id, username, password,  roles) -> None:
         self.__id = id
         self.__username = username
@@ -23,6 +32,8 @@ class User_login():
         self.__fullname = fullname
         self.__roles = roles
         print("user")
+
+   
 
     @classmethod
     def crear_user_login(self):
