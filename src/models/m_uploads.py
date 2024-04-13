@@ -1,9 +1,10 @@
 # Database
 # from src.bd.bd import MyDbEnty
 from errno import errorcode
+
+from src.models.m_client import UserFile
 from ..dto.dtoImage import ImagenDTO
 from mysql.connector import Error
-import mysql
 from mysql.connector import IntegrityError
 from flask import jsonify, request
 # from ..bd import bd  as base
@@ -13,6 +14,33 @@ bd = base.MyDbEnty()
 
 
 class uploads():
+    async def load_userFile_form (self, USER:UserFile ,IMAGEN: ImagenDTO):
+        try:
+            connection = bd.conectar_con_bd()
+            cursor = connection.cursor()  # type: ignore
+            # cursor.execute("SET GLOBAL max_allowed_packet=67108864;")
+            # Ejecutar el procedimiento almacenado
+            cursor.execute("Call Insertar_Usuario_Form (%s,%s,%s,%s,%s,%s)",
+                           (USER.username, USER.password , USER.email, IMAGEN.namefile, IMAGEN.datafile, IMAGEN.id_face))
+
+            # Capturar la salida del procedimiento almacenado
+           # result = cursor.fetchone()
+           # print('Varible ',result)
+           # success_message = result[1] if result else None
+           # print('Seccess Message',success_message)
+            cursor.close()
+            connection.commit()  # type: ignore
+            bd.kill_conexion(connection)
+
+            return jsonify({"info": f"User Creado ID: {IMAGEN.id_face}"}), 201
+        except Error as error:
+            if error.errno == 1644:
+                bd.kill_conexion(connection)
+                return jsonify({"error": "Los datos ya existen en la base de datos"}), 400
+            elif error.errno == 1305:
+                return jsonify({"error": "El procedimiento almacenado no existe"}), 500
+            else:
+                return jsonify({"error": "Error desconocido", "informacion": str(error)}), 500
 
     async def loadfile(self, IMAGEN: ImagenDTO):
         try:

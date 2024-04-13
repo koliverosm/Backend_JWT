@@ -4,7 +4,7 @@ from flask import Blueprint, request, jsonify
 
 
 # Models
-from src.models.m_login import User_login, Id_Face
+from src.models.m_client import User_login, Id_Face
 # Security
 from src.utils.service_cifrado import Security
 # Services

@@ -1,14 +1,12 @@
 import uuid as has_id_face
-import asyncio
-from flask import jsonify, request, Blueprint
+from flask import json, jsonify, request, Blueprint
 from flask_cors import cross_origin
 from flask_uploads import UploadNotAllowed, UploadSet, IMAGES
 from werkzeug.utils import secure_filename
 from random import sample
 import os
-
-from src import uploads
 from src.dto.dtoImage import ImagenDTO
+from src.models.m_client import UserFile
 from ..controllers import uploadscontroller
 from cryptography.fernet import Fernet
 import base64
@@ -32,8 +30,9 @@ def name_face_generator():
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    result = '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return result
 
 
 def __encrypt(photo_encryted: bytes):
@@ -80,13 +79,15 @@ async def upload_file():
     if request.method == 'POST':
         try:
             file = request.files['image']
-            print("Esto Llega De JS ", request.files['image'])
+            print('Esto Es lo Segundo', request.files)
             # Verificar que el archivo sea una imagen
             if file and allowed_file(file.filename):
                 # La ruta donde se encuentra el archivo actual
                 basepath = os.path.dirname(__file__)
                 # Nombre original del archivo
                 filename = secure_filename(file.filename)  # type: ignore
+                id_face = has_id_face.uuid5(
+                    has_id_face.NAMESPACE_DNS, f'{filename}')
 
                 # Guardar el archivo en el sistema de archivos
                 extension = os.path.splitext(filename)[1]
@@ -100,11 +101,9 @@ async def upload_file():
                     foto = f.read()
                # respuesta = ""
                # code = 201
-                id_face = has_id_face.uuid5(
-                    has_id_face.NAMESPACE_DNS, f'{filename}')
-                
+
                 respuesta, code = await carga.c_upload(ImagenDTO(filename, foto, f'{id_face}'))
-                #print('Esta Es la Repuesta Despues De Subir ROUTES',respuesta, "Codigo", code)
+                # print('Esta Es la Repuesta Despues De Subir ROUTES',respuesta, "Codigo", code)
                 if code == 201:
                     # si se sube correctamente en la base de datos se guarda en el directorio
                     # file.save(upload_path)
@@ -113,8 +112,70 @@ async def upload_file():
 
                     return respuesta, 400
             else:
-                #print("Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.")
+                # print("Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.")
                 return 'Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.'
         except UploadNotAllowed:
             return 'Tipo de archivo no permitido'
     return 'No se ha subido ningún archivo'
+
+
+@uploadsFile.route('/adminFile', methods=['POST'])
+async def upload_file_admin():
+    if request.method == 'POST':
+        try:
+            print('Datos del formulario:', request.form)
+            print('Encabezados:', request.headers)
+            print('Archivos:', request.files)
+            file = request.files['image']
+            dataUser = json.loads(request.form['dataUser'])
+            # print("Esto Llega De JS ", file)
+            username = dataUser.get('username')
+            password = dataUser.get('password')
+            email = dataUser.get('email')
+            # print(dataUser)
+            print('User', username, password, email)
+            if file and allowed_file(file.filename):
+                # La ruta donde se encuentra el archivo actual
+                basepath = os.path.dirname(__file__)
+                # Nombre original del archivo
+                filename = secure_filename(file.filename)  # type: ignore
+                id_face = "ya tiene uno "
+
+                # Guardar el archivo en el sistema de archivos
+                extension = os.path.splitext(filename)[1]
+                nuevoNombreFile = filename + extension  # name_face_generator() + extension
+                upload_path = os.path.join(
+                    basepath, '../uploads/Face_reco', nuevoNombreFile)
+
+                file.save(upload_path)
+                ##### Encriptar La Foto En Formarlo BLOB Para la base de datos #####
+                with open(upload_path, 'rb') as f:
+                    foto = f.read()
+               # respuesta = ""
+               # code = 201
+
+                respuesta, code = await carga.c_upload_userFile(UserFile(username, password, email), ImagenDTO(filename, foto, f'{id_face}'))
+                # print('Esta Es la Repuesta Despues De Subir ROUTES',respuesta, "Codigo", code)
+                if code == 201:
+                    # si se sube correctamente en la base de datos se guarda en el directorio
+                    # file.save(upload_path)
+                    return respuesta, 201
+                elif code == 400:
+
+                    return respuesta, 400
+            else:
+                mensaje = 'Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.'
+                return jsonify({'message': mensaje})
+
+            return jsonify({'message': ''})
+        except UploadNotAllowed:
+            return jsonify({'message': 'Tipo de archivo no permitido'})
+
+    else:
+        return jsonify('metodo', request.method, 'Estas En La Ruta /upload')
+
+
+@uploadsFile.route('/generated', methods=['GET'])
+def generated():
+    id_face = has_id_face.uuid5(has_id_face.NAMESPACE_DNS, f'namiFace')
+    return jsonify({'generated': f'{id_face}'}), 201

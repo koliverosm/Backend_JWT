@@ -4,7 +4,7 @@ from ...bd.bdxamm import MyDbEnty
 # Errors
 from ...utils.service_error import CustomException
 # Models
-from ..m_login import User_login
+from ..m_client import User_login
 bd = MyDbEnty()
 
 class AuthService():
