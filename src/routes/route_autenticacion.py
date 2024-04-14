@@ -1,15 +1,12 @@
 
 from flask_cors import cross_origin
 from flask import Blueprint, request, jsonify
-
-
 # Models
 from src.models.m_client import User_login, Id_Face
 # Security
 from src.utils.service_cifrado import Security
 # Services
 from src.controllers.logincontroller import Logincontroller 
-from src.models.autenticacion.m_authe import AuthService
 
 autenticacion = Blueprint('autenticacion', __name__)
 instan_controlle = Logincontroller()
@@ -17,7 +14,6 @@ instan_controlle = Logincontroller()
 @autenticacion.route('/', methods=['GET', 'POST'])
 def index():
     return jsonify({'success': 'Estas En La Ruta Autenticacion'})
-
 
 @cross_origin()
 @autenticacion.route('/generated_token', methods=['POST'])

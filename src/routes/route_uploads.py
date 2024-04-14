@@ -116,7 +116,7 @@ async def upload_file():
                 return 'Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.'
         except UploadNotAllowed:
             return 'Tipo de archivo no permitido'
-    return 'No se ha subido ningún archivo'
+    return 'No se ha  subido ningún archivo'
 
 
 @uploadsFile.route('/adminFile', methods=['POST'])
@@ -168,8 +168,10 @@ async def upload_file_admin():
     else:
         return jsonify('metodo', request.method, 'Estas En La Ruta /upload')
 
+
 @uploadsFile.route('/generated', methods=['GET'])
 def generated():
-    id_face = has_id_face.uuid5(has_id_face.NAMESPACE_DNS, name_face_generator())
-    print("Generado Desde El Backend: " , id_face)
+    id_face = has_id_face.uuid5(
+        has_id_face.NAMESPACE_DNS, name_face_generator())
+    print("Generado Desde El Backend: ", id_face)
     return jsonify({'generated': f'{id_face}'}), 201

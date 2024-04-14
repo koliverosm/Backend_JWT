@@ -19,7 +19,7 @@ CORS(app)
 def index():
     nameproyect = 'Backend Desarrollado En Python'
     name = 'Nami Asistente(Chatbot Prov.101)'
-    teams = 'Kevin Oliveros - Isaac Perez - Roberto Linero '
+    teams = 'Kevin Oliveros - Isaac Perez - Roberto Lineros'
     date = datetime.now()
     date = date - timedelta(days=30 + 2)
     print(date)

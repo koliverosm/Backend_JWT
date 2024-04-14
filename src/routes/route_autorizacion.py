@@ -13,16 +13,17 @@ def index_verify_token():
 
     return jsonify({'METODO': f'{request.method}', "Ruta Actual": "verify_token"}), 200
 
+
 @cross_origin()
 @verify_token.route('/now', methods=['GET', 'POST'])
 async def verifytoken():
     if request.method == 'POST':
         headers = request.headers
-        #print("Formato De Headers", headers)
+        # print("Formato De Headers", headers)
         try:
             autorizacion, has_access, statuscode = await Security.verify_token(
-               headers)
-            #print('La Validacion Es: ', has_access, 'Code:', statuscode)
+                headers)
+            # print('La Validacion Es: ', has_access, 'Code:', statuscode)
             if autorizacion and statuscode == 200:
                 response = jsonify(
                     {'message': autorizacion, 'data': has_access})

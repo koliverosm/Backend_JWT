@@ -5,14 +5,13 @@ usr = usuariocontroller
 
 con_usuario = usr.Usuariocontroller()
 
-
 Usuarios_blueprint = Blueprint('usuarios', __name__)
 
 
 @Usuarios_blueprint.route('/')
 @cross_origin()
 def index():
-        
+
     return jsonify({'message': 'Welcome Estas En Ruta Usuario, Apartir De Aqui Todo LLeva /usuarios/+La Ruta Que Deseas Acceder'})
 
 

@@ -1,10 +1,3 @@
-from config import *
-from flask import jsonify, request
-# from ..bd import bd  as base
-from ..bd import bdxamm as base
-bd = base.MyDbEnty()
-# bd = base.MyDbEnty()
-
 
 class Id_Face():
 
@@ -48,9 +41,6 @@ class UserFile():
     @get_email.setter
     def email(self, value):
         self._email = value
-
-
-    
 
 
 class User_login():

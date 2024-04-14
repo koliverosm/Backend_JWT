@@ -5,6 +5,7 @@ class Logincontroller():
         data= mod_login.login_user(users)
         return data
     
+    
     def c_login_credentials_faces(self, id_face_identy):
         data= mod_login.login_user_id_face(id_face_identy)
         return data

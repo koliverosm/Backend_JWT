@@ -1,15 +1,12 @@
 # Database
 # from src.bd.bd import MyDbEnty
-from errno import errorcode
 
 from src.models.m_client import UserFile
 from ..dto.dtoImage import ImagenDTO
 from mysql.connector import Error
 from mysql.connector import IntegrityError
-from flask import jsonify, request
-# from ..bd import bd  as base
+from flask import jsonify
 from ..bd import bdxamm as base
-from decouple import config as datos
 bd = base.MyDbEnty()
 
 

@@ -1,9 +1,7 @@
 from config import *
 from flask import jsonify, request
-# from ..bd import bd  as base
 from ..bd import bdxamm as base
 bd = base.MyDbEnty()
-# bd = base.MyDbEnty()
 
 
 class Usuario():
@@ -55,7 +53,7 @@ class Usuario():
                            ())
             cursor.close()
             connection.commit()
-            return jsonify({"":""}), 200
+            return jsonify({"": ""}), 200
 
         except (Exception) as error:
             return jsonify({"informacion": error}), 404

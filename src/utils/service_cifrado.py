@@ -1,5 +1,4 @@
 from decouple import config
-from flask import jsonify
 import datetime
 import jwt
 import pytz

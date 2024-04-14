@@ -16,6 +16,7 @@ class UploadController():
         data =  await modelo_upload.loadfile(Image)
         return data
 
+
     def c_getfoto(self, json):
         data = modelo_upload.downloadfile(json)
         return data
