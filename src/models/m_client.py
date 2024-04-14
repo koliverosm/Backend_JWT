@@ -21,9 +21,37 @@ class Id_Face():
 class UserFile():
 
     def __init__(self, username, password, email) -> None:
-        self.__username = username
-        self.__password = password
-        self.__email = email
+        self._username = username
+        self._password = password
+        self._email = email
+
+    @property
+    def get_username(self):
+        return self._username
+
+    @get_username.setter
+    def username(self, value):
+        self._username = value
+
+    @property
+    def get_password(self):
+        return self._password
+
+    @get_password.setter
+    def password(self, value):
+        self._password = value
+
+    @property
+    def get_email(self):
+        return self._email
+
+    @get_email.setter
+    def email(self, value):
+        self._email = value
+
+
+    
+
 
 class User_login():
 
@@ -33,14 +61,12 @@ class User_login():
         self.__password = password
         self.__roles = roles
   
-
     
     def user_validated(self, id,  username, password,  roles):
         self.__id = id
         self.__username = username
         self.__password = password
         self.__roles = roles
-
 
 ##### GETTER AND SETTER #####
     def get_id(self):

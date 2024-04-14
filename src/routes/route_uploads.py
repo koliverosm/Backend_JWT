@@ -20,7 +20,7 @@ photos = UploadSet('photos', IMAGES)
 ################# FUNCIONES PRINCIPALES#############################
 def name_face_generator():
     # Generando string aleatorio
-    string_aleatorio = "CUL0123456789"
+    string_aleatorio = "KEVINISAACROBERTO"
     longitud = 10
     secuencia = string_aleatorio.upper()
     resultado_aleatorio = sample(secuencia, longitud)
@@ -123,45 +123,39 @@ async def upload_file():
 async def upload_file_admin():
     if request.method == 'POST':
         try:
-            print('Datos del formulario:', request.form)
-            print('Encabezados:', request.headers)
-            print('Archivos:', request.files)
+          #  print('Datos del formulario:', request.form)
+           # print('Encabezados:', request.headers)
+            # print('Archivos:', request.files)
             file = request.files['image']
             dataUser = json.loads(request.form['dataUser'])
             # print("Esto Llega De JS ", file)
             username = dataUser.get('username')
             password = dataUser.get('password')
             email = dataUser.get('email')
+            id_face_form = dataUser.get('id_face')
             # print(dataUser)
-            print('User', username, password, email)
+            # print('User', username, password, email)
             if file and allowed_file(file.filename):
                 # La ruta donde se encuentra el archivo actual
                 basepath = os.path.dirname(__file__)
                 # Nombre original del archivo
                 filename = secure_filename(file.filename)  # type: ignore
-                id_face = "ya tiene uno "
-
                 # Guardar el archivo en el sistema de archivos
                 extension = os.path.splitext(filename)[1]
                 nuevoNombreFile = filename + extension  # name_face_generator() + extension
                 upload_path = os.path.join(
                     basepath, '../uploads/Face_reco', nuevoNombreFile)
-
                 file.save(upload_path)
                 ##### Encriptar La Foto En Formarlo BLOB Para la base de datos #####
                 with open(upload_path, 'rb') as f:
                     foto = f.read()
-               # respuesta = ""
-               # code = 201
-
-                respuesta, code = await carga.c_upload_userFile(UserFile(username, password, email), ImagenDTO(filename, foto, f'{id_face}'))
+                respuesta, code = await carga.c_upload_userFile(UserFile(username, password, email), ImagenDTO(filename, foto, f'{id_face_form}'))
                 # print('Esta Es la Repuesta Despues De Subir ROUTES',respuesta, "Codigo", code)
                 if code == 201:
                     # si se sube correctamente en la base de datos se guarda en el directorio
                     # file.save(upload_path)
                     return respuesta, 201
                 elif code == 400:
-
                     return respuesta, 400
             else:
                 mensaje = 'Tipo de archivo no permitido. Por favor, suba solo archivos de imagen.'
@@ -174,8 +168,8 @@ async def upload_file_admin():
     else:
         return jsonify('metodo', request.method, 'Estas En La Ruta /upload')
 
-
 @uploadsFile.route('/generated', methods=['GET'])
 def generated():
-    id_face = has_id_face.uuid5(has_id_face.NAMESPACE_DNS, f'namiFace')
+    id_face = has_id_face.uuid5(has_id_face.NAMESPACE_DNS, name_face_generator())
+    print("Generado Desde El Backend: " , id_face)
     return jsonify({'generated': f'{id_face}'}), 201

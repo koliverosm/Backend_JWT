@@ -14,33 +14,40 @@ bd = base.MyDbEnty()
 
 
 class uploads():
-    async def load_userFile_form (self, USER:UserFile ,IMAGEN: ImagenDTO):
+    async def load_userFile_form(self, dataUser: UserFile, IMAGEN: ImagenDTO):
         try:
+        
+            # Ejecutar el procedimiento almacenado
+            print(f' Datos: {dataUser.get_username} {dataUser.get_password} {dataUser.get_email} {IMAGEN.get_namefile}{ IMAGEN.get_id_face}')
+
             connection = bd.conectar_con_bd()
             cursor = connection.cursor()  # type: ignore
-            # cursor.execute("SET GLOBAL max_allowed_packet=67108864;")
-            # Ejecutar el procedimiento almacenado
-            cursor.execute("Call Insertar_Usuario_Form (%s,%s,%s,%s,%s,%s)",
-                           (USER.username, USER.password , USER.email, IMAGEN.namefile, IMAGEN.datafile, IMAGEN.id_face))
+            cursor.execute("Call Insert_dataUser(%s,%s,%s,%s,%s,%s)",
+                           (dataUser.get_username, dataUser.get_password, dataUser.get_email, IMAGEN.get_namefile, IMAGEN.get_datafile, IMAGEN.get_id_face,))
+           
+           # result = await cursor.fetchone()
+           #  print(result)
 
-            # Capturar la salida del procedimiento almacenado
            # result = cursor.fetchone()
-           # print('Varible ',result)
-           # success_message = result[1] if result else None
-           # print('Seccess Message',success_message)
             cursor.close()
-            connection.commit()  # type: ignore
+            connection.commit()
             bd.kill_conexion(connection)
+            return jsonify({"info": f"Resul 1: "}), 201
+        except IntegrityError as error:
+            return jsonify({"error": "Violación de la integridad de la clave única", "informacion": str(error)}), 500
 
-            return jsonify({"info": f"User Creado ID: {IMAGEN.id_face}"}), 201
-        except Error as error:
+        except Exception as error_general:
+            return jsonify({"error": "Error general", "informacion": str(error_general)}), 500
+        '''except Error as error:
             if error.errno == 1644:
-                bd.kill_conexion(connection)
+                
                 return jsonify({"error": "Los datos ya existen en la base de datos"}), 400
             elif error.errno == 1305:
+                
                 return jsonify({"error": "El procedimiento almacenado no existe"}), 500
             else:
-                return jsonify({"error": "Error desconocido", "informacion": str(error)}), 500
+                
+                return jsonify({"error": "Error desconocido", "informacion": str(error)}), 500'''
 
     async def loadfile(self, IMAGEN: ImagenDTO):
         try:
@@ -49,7 +56,7 @@ class uploads():
             # cursor.execute("SET GLOBAL max_allowed_packet=67108864;")
             # Ejecutar el procedimiento almacenado
             cursor.execute("Call almacenar_foto (%s, %s , %s)",
-                           (IMAGEN.namefile, IMAGEN.datafile, IMAGEN.id_face))
+                           (IMAGEN.get_namefile, IMAGEN.get_datafile, IMAGEN.get_id_face))
 
             # Capturar la salida del procedimiento almacenado
            # result = cursor.fetchone()
@@ -82,13 +89,13 @@ class uploads():
 
             # Verificar si se obtuvieron resultados
             if rv is not None:
-            
+
                 for result in rv:
                     # Suponiendo que 'namefile' es el primer elemento y 'datafile' el segundo en el resultado
                     namefile = result[0]  # type: ignore
                     datafile = result[1]  # type: ignore
                     id_face = result[2]  # type: ignore
-                    return ImagenDTO(namefile, datafile , id_face ), 200
+                    return ImagenDTO(namefile, datafile, id_face), 200
                 else:
                     # No se encontraron registros para el id dado
                     return {"error": "No se encontró el registro."}, 404
