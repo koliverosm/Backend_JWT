@@ -48,7 +48,6 @@ def __encrypt(photo_encryted: bytes):
 @uploadsFile.route('/')
 @cross_origin()
 def index():
-
     return jsonify({'message': 'Welcome Estas En Ruta Uploads, Apartir De Aqui Todo LLeva /uploads/ + La Ruta Que Deseas Acceder'})
 
 
@@ -171,7 +170,6 @@ async def upload_file_admin():
 
 @uploadsFile.route('/generated', methods=['GET'])
 def generated():
-    id_face = has_id_face.uuid5(
-        has_id_face.NAMESPACE_DNS, name_face_generator())
+    id_face = has_id_face.uuid5(has_id_face.NAMESPACE_DNS, name_face_generator())
     print("Generado Desde El Backend: ", id_face)
     return jsonify({'generated': f'{id_face}'}), 201
