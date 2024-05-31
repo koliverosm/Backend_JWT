@@ -58,3 +58,45 @@ urllib3==2.2.1
 waitress==3.0.0
 Werkzeug==3.0.1
 wrapt==1.16.0
+
+"USE MiBaseDeDatos;
+
+-- Crear la tabla Usuarios
+CREATE TABLE Usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    fecha_nacimiento DATE
+);
+
+-- Crear la tabla Pedidos
+CREATE TABLE Pedidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT,
+    fecha_pedido DATE,
+    monto DECIMAL(10, 2),
+    CONSTRAINT fk_usuario FOREIGN KEY (id_usuario) REFERENCES Usuarios(id)
+);
+
+USE MiBaseDeDatos;
+
+SHOW TABLES;
+DESCRIBE Usuarios;
+
+SELECT 
+    name, 
+    last_name, 
+    birthdate,
+    TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) AS years,
+    TIMESTAMPDIFF(MONTH, birthdate, CURDATE()) % 12 AS months,
+    dayofmonth(now())-dayofmonth(birthdate) AS 'day',
+     CONCAT(' - Antigüedad: ', TIMESTAMPDIFF(YEAR, birthdate, CURDATE()), ' años') AS años_de_antiguedad
+    ,CASE 
+        WHEN TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) >= 18 THEN 'Es Mayor' 
+        ELSE 'Es Menor :('
+    END AS 'is_adult?'
+FROM 
+    usuario
+    order by años_de_antiguedad
+
+"
