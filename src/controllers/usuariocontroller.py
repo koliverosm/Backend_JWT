@@ -4,6 +4,9 @@ mod_usuario = Usuario()
 
 
 class Usuariocontroller():
+    def c_validate(self, json):
+        data = mod_usuario.validate(json)
+        return data
 
     def c_crear_usuario(self, json):
         data = mod_usuario.crear_usuario(json)

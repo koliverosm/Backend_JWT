@@ -44,20 +44,21 @@ class Usuario():
         except (Exception) as error:
             return jsonify({"informacion": error}), 406
 
-    def getDato(self):
-        # id , nombre , nombre_2 , apellido , apellido_2 ,
-        return {
-            'id': id,
-            'nombre': self.nombre,
-            'nombre_2': self.nombre_2,
-            'apelido': self.apelido,
-            'apelido_2': self.apelido_2,
-            'usuario': self.usuario,
-            'password': self.password,
-            'key': self.key,
-            'fecha_expiracion': self.fecha_expiracion,
-            'fecha_creacion': self.fecha_creacion
-        }
+    def validate(data):
+
+        try:
+            connection = bd.conectar_con_bd()
+            # Extraer los datos del JSON
+            data_face = data.get("id_face")
+            cursor = connection.cursor()
+            cursor.execute("CALL Insertar_usuario_admin (%s,%s,%s,%s)",
+                           ())
+            cursor.close()
+            connection.commit()
+            return jsonify({"":""}), 200
+
+        except (Exception) as error:
+            return jsonify({"informacion": error}), 404
 
     def m_consultar_usuarios(self):
         try:
@@ -84,30 +85,6 @@ class Usuario():
             return jsonify({"data": payload}), 200
         except (Exception) as error:
             return jsonify({"error": str(error)})
-
-    def m_crear_usuario_postgres(self):
-        try:
-            connection = bd.conectar_con_bd()
-            nombre = request.json['nombre']
-            nombre_2 = request.json['nombre_2']
-            apellido = request.json['apellido']
-            apellido_2 = request.json['apellido_2']
-            usuario = request.json['usuario']
-            password = request.json['password']
-            key = request.json['key']
-            fecha_expiracion = request.json['fecha_expiracion']
-            fecha_creacion = request.json['fecha_creacion']
-
-            cursor = connection.cursor()
-            cursor.execute("INSERT INTO usuarios (nombre,nombre_2,apellido,apellido_2,usuario,password,key,fecha_expiracion,fecha_creacion) values (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-                           (nombre, nombre_2, apellido, apellido_2, usuario, password, key, fecha_expiracion, fecha_creacion))
-            cursor.connection.commit()
-            cursor.close()
-
-            return jsonify({"informacion": "ok"})
-
-        except (Exception) as error:
-            return jsonify({"informacion": error})
 
     def m_consultar_usuario_id(self):
         try:

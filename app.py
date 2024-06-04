@@ -17,12 +17,13 @@ CORS(app)
 
 @app.route('/')
 def index():
-    name = 'Backend Desarrollado En Python'
+    nameproyect = 'Backend Desarrollado En Python'
+    name = 'Nami Asistente(Chatbot Prov.101)'
     teams = 'Kevin Oliveros - Isaac Perez - Roberto Linero '
     date = datetime.now()
     date = date - timedelta(days=30 + 2)
     print(date)
-    return jsonify({'Development:': name, 'Teams: ': teams, 'Fecha De Inicio': date}), 200
+    return jsonify({'Development:': name, 'Proyecto: ': nameproyect, 'Teams: ': teams, 'Fecha De Inicio': date}), 200
 
 ############### END####################################
 # SALIDA PRINCIPAL AL ERROR DE RUTAS NO ENCNONTRADAS#
@@ -32,7 +33,7 @@ def pagina_no_encontrada(error):
     return "<h1>Señor Usuario La Pagina A Donde Intenta Acceder No Existe...</h1>", 404
 ##################### END################################
 
-
+hosting:str = datos('HOST') # type: ignore
 if __name__ == "__main__":
     app.register_error_handler(404, pagina_no_encontrada)
-    app.run(host=datos('HOST'), port=datos('PORT'))  # type: ignore
+    app.run(host=datos('HOST'), port=datos('PORT'))   # type: ignore
